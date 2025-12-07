@@ -18,8 +18,8 @@
 #include "klog.h" // IWYU pragma: keep
 #include "throne_tracker.h"
 
-static unsigned int expected_manager_size = EXPECTED_MANAGER_SIZE;
-static char expected_manager_hash[SHA256_DIGEST_SIZE * 2 + 1] = EXPECTED_MANAGER_HASH;
+static const unsigned int expected_manager_sizes[] = { EXPECTED_MANAGER_SIZE, EXPECTED_LOCAL_MANAGER_SIZE };
+static const char *expected_manager_hashes[] = { EXPECTED_MANAGER_HASH, EXPECTED_LOCAL_MANAGER_HASH };
 
 struct sdesc {
 	struct shash_desc shash;
@@ -318,9 +318,14 @@ module_param_cb(ksu_debug_manager_uid, &expected_size_ops,
 
 bool is_manager_apk(char *path)
 {
-	// set debug info to print size and hash to kernel log
-	pr_info("%s: expected size: %u, expected hash: %s\n",
-		path, expected_manager_size, expected_manager_hash);
+	for (int i = 0; i < 2; i++) {
+		// set debug info to print size and hash to kernel log
+		pr_info("%s: expected size: %u, expected hash: %s\n",
+			path, expected_manager_sizes[i], expected_manager_hashes[i]);
 
-	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
+		if (check_v2_signature(path, expected_manager_sizes[i], expected_manager_hashes[i]))
+			return true;
+	}
+
+	return false;
 }

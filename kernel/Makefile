@@ -73,6 +73,14 @@ ifndef KSU_NEXT_MANAGER_HASH
 KSU_NEXT_MANAGER_HASH := 79e590113c4c4c0c222978e413a5faa801666957b1212a328e46c00c69821bf7
 endif
 
+ifndef KSU_NEXT_LOCAL_MANAGER_SIZE
+KSU_NEXT_LOCAL_MANAGER_SIZE := 0x338
+endif
+
+ifndef KSU_NEXT_LOCAL_MANAGER_HASH
+KSU_NEXT_LOCAL_MANAGER_HASH := e79f396f9a1aacd066a5f731824b3e5048acf8bf3757e9a200a811df52701ef2
+endif
+
 ifdef KSU_MANAGER_PACKAGE
 ccflags-y += -DKSU_MANAGER_PACKAGE=\"$(KSU_MANAGER_PACKAGE)\"
 $(info -- KernelSU-Next Manager package name: $(KSU_MANAGER_PACKAGE))
@@ -80,9 +88,13 @@ endif
 
 $(info -- KernelSU-Next Manager signature size: $(KSU_NEXT_MANAGER_SIZE))
 $(info -- KernelSU-Next Manager signature hash: $(KSU_NEXT_MANAGER_HASH))
+$(info -- KernelSU-Next Local Manager signature size: $(KSU_NEXT_LOCAL_MANAGER_SIZE))
+$(info -- KernelSU-Next Local Manager signature hash: $(KSU_NEXT_LOCAL_MANAGER_HASH))
 
 ccflags-y += -DEXPECTED_MANAGER_SIZE=$(KSU_NEXT_MANAGER_SIZE)
 ccflags-y += -DEXPECTED_MANAGER_HASH=\"$(KSU_NEXT_MANAGER_HASH)\"
+ccflags-y += -DEXPECTED_LOCAL_MANAGER_SIZE=$(KSU_NEXT_LOCAL_MANAGER_SIZE)
+ccflags-y += -DEXPECTED_LOCAL_MANAGER_HASH=\"$(KSU_NEXT_LOCAL_MANAGER_HASH)\"
 
 ccflags-y += -DKSU_UMOUNT
 
