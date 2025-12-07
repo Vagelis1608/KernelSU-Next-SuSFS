@@ -53,6 +53,9 @@ on:
         required: false
         type: boolean
         default: false
+      susfs_commit:
+        required: false
+        type: string
     secrets:
       BOOT_SIGN_KEY:
         required: false
@@ -114,6 +117,9 @@ jobs:
           fi
           repo --version
           repo --trace sync -c -j$(nproc --all) --no-tags
+
+          sed -i '$s|echo "\$res"|echo "\$res-Vagelis1608"|' ./common/scripts/setlocalversion
+
           df -h
 
       - name: Setup KernelSU-Next
@@ -148,6 +154,18 @@ jobs:
           fi
           repo status
           echo "[+] KernelSU-Next setup done."
+
+      - name: Setup SuSFS
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b "gki-${{ inputs.version }}"
+          if [[ -n "${{ inputs.susfs_commit }}" ]]; then
+            cd susfs4ksu
+            git checkout "${{ inputs.susfs_commit }}"
+            cd ..
+          fi
+          cp "./susfs4ksu/kernel_patches/fs/"* "./android-kernel/common/fs/"
+          cp "./susfs4ksu/kernel_patches/include/linux/"* "./android-kernel/common/include/linux/"
 
       - name: Symbol Magic
         run: |
