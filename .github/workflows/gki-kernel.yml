@@ -166,9 +166,9 @@ jobs:
           fi
           cp -fv "./susfs4ksu/kernel_patches/fs/"* "./android-kernel/common/fs/"
           cp -fv "./susfs4ksu/kernel_patches/include/linux/"* "./android-kernel/common/include/linux/"
-          cp -fv ./susfs4ksu/kernel_patches/50_add_susfs_in_kernel-${{ inputs.version }}.patch ./android-kernel/common/
+          cp -fv ./susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ inputs.version }}.patch ./android-kernel/common/
           cd ./android-kernel/common/
-          patch -p1 < 50_add_susfs_in_kernel-${{ inputs.version }}.patch
+          patch -p1 < 50_add_susfs_in_gki-${{ inputs.version }}.patch
 
       - name: Symbol Magic
         run: |
