@@ -14,9 +14,9 @@ jobs:
     secrets: inherit
     with:
       version: android12-5.10
-      version_name: android12-5.10.236
-      tag: android12-5.10-2025-05
-      os_patch_level: 2025-05
+      version_name: android12-5.10.237
+      tag: android12-5.10-2025-09
+      os_patch_level: 2025-09
       patch_path: "5.10"
       susfs_commit: ${{ inputs.susfs_commit }}
   
