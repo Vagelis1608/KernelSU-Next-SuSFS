@@ -51,7 +51,7 @@ long __nocfi ksu_hook_newfstatat(int orig_nr, const struct pt_regs *regs)
     const char __user **filename_user;
     int *flags;
 
-    if (!ksu_su_compat_enabled)
+    if (!static_branch_likely(&ksu_su_compat_enabled))
         return ksu_syscall_table[orig_nr](regs);
 
     dfd = (int *)&PT_REGS_PARM1(regs);
@@ -68,7 +68,7 @@ long __nocfi ksu_hook_faccessat(int orig_nr, const struct pt_regs *regs)
     const char __user **filename_user;
     int *mode;
 
-    if (!ksu_su_compat_enabled)
+    if (!static_branch_likely(&ksu_su_compat_enabled))
         return ksu_syscall_table[orig_nr](regs);
 
     dfd = (int *)&PT_REGS_PARM1(regs);
@@ -96,7 +96,7 @@ long __nocfi ksu_hook_execve(int orig_nr, const struct pt_regs *regs)
 
     if (current->pid != 1 && current_is_init) {
         ksu_handle_init_mark_tracker(filename_user);
-    } else if (ksu_su_compat_enabled) {
+    } else if (static_branch_likely(&ksu_su_compat_enabled)) {
         return ksu_handle_execve_sucompat(filename_user, orig_nr, regs);
     }
 
@@ -111,6 +111,10 @@ long __nocfi ksu_hook_setresuid(int orig_nr, const struct pt_regs *regs)
     if (ret < 0)
         return ret;
 
+#ifdef CONFIG_KSU_SUSFS
+    ksu_handle_setresuid(current_uid().val, current_uid().val, current_uid().val);
+#else
     ksu_handle_setresuid(old_uid, current_uid().val);
+#endif
     return ret;
 }
