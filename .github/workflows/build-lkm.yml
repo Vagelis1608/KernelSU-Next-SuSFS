@@ -1,20 +1,42 @@
-name: Build LKM for KernelSU
+name: Build LKM for KernelSU for Pong
 on:
   workflow_call:
   workflow_dispatch:
 jobs:
   build-lkm:
-    strategy:
-      matrix:
-        kmi:
-          - android12-5.10
-          - android13-5.10
-          - android13-5.15
-          - android14-5.15
-          - android14-6.1
-          - android15-6.6
-          - android16-6.12
     uses: ./.github/workflows/ddk-lkm.yml
     with:
-      kmi: ${{ matrix.kmi }}
+      kmi: android12-5.10
       ddk_release: '20260313'
+
+  build-ksuinit:
+    uses: ./.github/workflows/ksuinit.yml
+
+  root-img:
+    runs-on: ubuntu-latest
+    needs:
+      - build-lkm
+      - build-ksuinit
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v8
+
+      - name: Patch in module
+        run: |
+          chmod 755 magiskboot
+          ls -l
+
+          mv -f ./**/release/ksuinit ksuinit
+          mv -f *_kernelsu.ko ksun.ko
+
+          ./magiskboot unpack pong.img
+          ./magiskboot cpio ramdisk.cpio 'mv init init.real'
+          ./magiskboot cpio ramdisk.cpio 'add 0755 ksuinit init'
+          ./magiskboot cpio ramdisk.cpio 'add 0755 ksun.ko kernelsu.ko'
+          ./magiskboot repack pong.img ksun-pong.img
+
+      - name: Upload rooted img
+        uses: actions/upload-artifact@v5
+        with:
+          name: ksun-pong_${{ github.run_number }}
+          path: ksun-pong.img
