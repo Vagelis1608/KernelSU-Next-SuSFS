@@ -13,7 +13,7 @@ jobs:
     uses: ./.github/workflows/ksuinit.yml
 
   root-img:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     needs:
       - build-lkm
       - build-ksuinit
