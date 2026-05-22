@@ -34,6 +34,7 @@ jobs:
           chmod -R 755 AIK
           cd AIK
           ./unpackimg.sh ../pong.img
+          chmod 755 ./ramdisk
           mv -f ./ramdisk/init ./ramdisk/init.real
           cp -f ../ksuinit ./ramdisk/init || exit 1
           cp -f ../ksun.ko ./ramdisk/kernelsu.ko || exit 1
