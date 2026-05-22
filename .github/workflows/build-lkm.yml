@@ -28,14 +28,14 @@ jobs:
         run: |
           ls -lh
 
-          mv -f ./ksuinit/**/release/ksuinit ksuinit
+          mv -f ./ksuinit/**/release/ksuinit init
           mv -f ./**/*_kernelsu.ko ksun.ko
 
           chmod -R 755 AIK
           cd AIK
           ./unpackimg.sh --nosudo ../pong.img
           mv -f ./ramdisk/init ./ramdisk/init.real
-          cp -f ../ksuinit ./ramdisk/init || exit 1
+          cp -f ../init ./ramdisk/init || exit 1
           cp -f ../ksun.ko ./ramdisk/kernelsu.ko || exit 1
           chmod 755 ./ramdisk/init ./ramdisk/kernelsu.ko || exit 1
           ./repackimg.sh
