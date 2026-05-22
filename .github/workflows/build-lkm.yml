@@ -31,6 +31,7 @@ jobs:
           mv -f ./ksuinit/**/release/ksuinit ksuinit
           mv -f ./**/*_kernelsu.ko ksun.ko
 
+          chmod -R 755 AIK
           cd AIK
           ./unpackimg.sh ../pong.img
           mv -f ./ramdisk/init ./ramdisk/init.real
