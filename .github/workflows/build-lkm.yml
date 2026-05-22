@@ -13,7 +13,7 @@ jobs:
     uses: ./.github/workflows/ksuinit.yml
 
   root-img:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     needs:
       - build-lkm
       - build-ksuinit
@@ -26,17 +26,20 @@ jobs:
 
       - name: Patch in module
         run: |
-          chmod 755 magiskboot
           ls -lh
 
           mv -f ./ksuinit/**/release/ksuinit ksuinit
           mv -f ./**/*_kernelsu.ko ksun.ko
 
-          ./magiskboot unpack pong.img
-          ./magiskboot cpio ramdisk.cpio 'mv init init.real'
-          ./magiskboot cpio ramdisk.cpio 'add 0755 ksuinit init'
-          ./magiskboot cpio ramdisk.cpio 'add 0755 ksun.ko kernelsu.ko'
-          ./magiskboot repack pong.img ksun-pong.img
+          cd AIK
+          ./unpackimg.sh ../pong.img
+          mv -f ./ramdisk/init ./ramdisk/init.real
+          cp -f ../ksuinit ./ramdisk/init || exit 1
+          cp -f ../ksun.ko ./ramdisk/kernelsu.ko || exit 1
+          chmod 755 ./ramdisk/init ./ramdisk/kernelsu.ko || exit 1
+          ./repackimg.sh
+
+          cp -f image-new.img ../ksun-pong.img || exit 1
 
       - name: Upload rooted img
         uses: actions/upload-artifact@v5
