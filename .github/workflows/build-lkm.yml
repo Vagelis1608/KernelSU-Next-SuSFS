@@ -27,10 +27,10 @@ jobs:
       - name: Patch in module
         run: |
           chmod 755 magiskboot
-          ls -l
+          ls -lh
 
-          mv -f ./**/release/ksuinit ksuinit
-          mv -f *_kernelsu.ko ksun.ko
+          mv -f ./ksuinit/**/release/ksuinit ksuinit
+          mv -f ./**/*_kernelsu.ko ksun.ko
 
           ./magiskboot unpack pong.img
           ./magiskboot cpio ramdisk.cpio 'mv init init.real'
